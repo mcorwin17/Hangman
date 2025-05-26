@@ -1,0 +1,63 @@
+# maxwell corwin june 5th 2024
+
+import random
+import hangman_stages
+import world_file
+
+def get_user_guess():
+    # get a letter guess from the user
+    return input("Guess a letter: ").lower()
+
+def display_game_state(display, lives):
+    # show current game state to player
+    print(display)
+    print(hangman_stages.stages[lives])
+
+def check_guess(chosen_word, display, guessed_letter):
+    # check if the guessed letter is in the word and update display
+    found = False
+    for position, letter in enumerate(chosen_word):
+        if letter == guessed_letter:
+            display[position] = guessed_letter
+            found = True
+    return found
+
+def play_hangman():
+    # main game logic
+    lives = 6
+    chosen_word = random.choice(world_file.words)
+    display = ["_" for _ in range(len(chosen_word))]
+    
+    while True:
+        display_game_state(display, lives)
+        guessed_letter = get_user_guess()
+        
+        if guessed_letter in display:
+            print(f"you've already guessed '{guessed_letter}'")
+            continue
+            
+        if not check_guess(chosen_word, display, guessed_letter):
+            lives -= 1
+            print(f"wrong guess! you lose a life. lives remaining: {lives}")
+            if lives == 0:
+                print(f"you lose!! the word was '{chosen_word}'.")
+                return True
+                
+        if "_" not in display:
+            print("you won!!")
+            return True
+            
+def play_again():
+    # ask if player wants another game
+    return input("Type 'yes' to continue, type 'no' to exit.\n").lower() != 'no'
+
+def main():
+    # game loop
+    while True:
+        play_hangman()
+        if not play_again():
+            print("have a nice day! bye..")
+            break
+
+if __name__ == "__main__":
+    main()
